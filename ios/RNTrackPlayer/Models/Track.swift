@@ -138,9 +138,22 @@ class Track: NSObject, AudioItem, TimePitching, AssetOptionsProviding {
 
     func getAssetOptions() -> [String: Any] {
         if let headers = headers {
-            return ["AVURLAssetHTTPHeaderFieldsKey": headers]
+            if let hasSubtitles = originalObject["hasSubtitles"] as? Bool, hasSubtitles {
+                // hasSubtitles is true
+                return ["AVURLAssetHTTPHeaderFieldsKey": headers, "AVURLAssetPreferPreciseDurationAndTimingKey": true]
+            } else {
+                // hasSubtitles is not existed, or false
+                return ["AVURLAssetHTTPHeaderFieldsKey": headers]
+            }
+        }
+        
+        if let hasSubtitles = originalObject["hasSubtitles"] as? Bool, hasSubtitles {
+            print("dlsound subtitle true")
+            // hasSubtitles is true
+            return ["AVURLAssetPreferPreciseDurationAndTimingKey": true]
         }
 
+        print("dlsound subtitle false")
         return [:]
     }
 
